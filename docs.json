@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Mirasys India Documentation",
   "colors": {
     "primary": "#16A34A",
     "light": "#07C983",
@@ -16,20 +16,13 @@
           {
             "group": "Get Started",
             "pages": [
-              "introduction",
-              "quickstart",
-              "development"
+              "introduction"
             ]
           },
           {
-            "group": "Essentials",
+            "group": "AI System",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "ai/installation"
             ]
           }
         ]
@@ -58,26 +51,26 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Mirasys India",
+          "href": "https://mirasysindia.com/",
+          "icon": "house"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
+          "anchor": "Microsoft Teams",
+          "href": "https://teams.microsoft.com/v2/",
           "icon": "slack"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "Mirasys VMS",
+          "href": "https://documentation.mirasys.com/",
+          "icon": "book"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/mlight.png",
+    "dark": "/logo/mdark.png"
   },
   "navbar": {
     "links": [
