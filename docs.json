@@ -22,7 +22,15 @@
           {
             "group": "AI System",
             "pages": [
-              "ai/installation"
+              "ai/installation",
+              "ai/services"
+            ]
+          },
+          {
+            "group": "Frontend",
+            "pages": [
+              "frontend/installation",
+              "frontend/configs"
             ]
           }
         ]
@@ -76,7 +84,7 @@
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "href": "mailto:support@mirasysindia.com"
       }
     ],
     "primary": {
@@ -87,9 +95,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "youtube": "https://www.youtube.com/channel/UCWr-rg6QJ64UErz2R-oKJUQ",
+      "medium": "https://mirasysindia.com/news/",
+      "linkedin": "https://in.linkedin.com/company/mirasys-india-pvt-ltd"
     }
   }
 }

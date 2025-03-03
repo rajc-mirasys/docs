@@ -5,8 +5,14 @@ icon: 'puzzle-piece'
 ---
 
 <img
-  style={{ borderRadius: '0.5rem' }}
-  src="/images/operating_systems.png"
+  className="block dark:hidden"
+  src="/images/os-light.png"
+  alt="Linux is Good"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/os-dark.png"
+  alt="Linux is Good"
 />
 
 Our AI system works on a Linux operating system, specially Ubuntu (24.04 or 22.04). Linux systems are faster and more efficient for AI-based object and activity detection due to their lightweight architecture, better memory management, and ability to optimize hardware performance, especially for GPU acceleration. Additionally, Linux offers better support for AI frameworks, lower latency in real-time processing, and greater stability for high-performance computing tasks. [It powers most of world's supercomputers](https://en.wikipedia.org/wiki/TOP500).
@@ -42,18 +48,18 @@ We have customized a Ubuntu ISO with pre-installed dependencies for AI-based obj
   </Accordion>
 </AccordionGroup>
 
-## After fresh install of Ubuntu OS
+## Manual Installation: On a fresh Ubuntu OS
 
-**Pre-condition**: You must know by now how to create a bootable Ubuntu ISO, disable secura boot incase of Nvidia GPUs and basic CLI usages.
+**Pre-condition**: You must know by now how to create a bootable Ubuntu ISO, disable secure boot in case of Nvidia GPUs and basic CLI usages.
 
-<Note>
-  Ubuntu has a good terminal built-in. But Windows's command prompt is very basic, so please download [Windows Terminal](https://github.com/microsoft/terminal). This has features of tabs, and supports more Linux native commands that will be useful when interacting with it.
-</Note>
+<Tip>
+  Ubuntu has a good terminal built-in but Windows's command prompt is very basic, so please download [Windows Terminal](https://github.com/microsoft/terminal). This has features of tabs, and supports more Linux native commands that will be useful when interacting with it.
+</Tip>
 
 ### Nvidia
 
 <Warning>
-  Only do if you have Nvidia GPU. If you're not sure, then run the following command to check if Nvidia GPU is available.
+  Only do if you have Nvidia GPU. If you're not sure, then run the following command to check if Nvidia GPU is available and don't forget to disable Secure Boot in BIOS settings.
 </Warning>
 
 Update the device database and find if Nvidia GPU is available.
@@ -88,6 +94,8 @@ sudo mv -n cuda/include/* /usr/local/cuda/include/
 sudo mv -n cuda/lib64/* /usr/local/cuda/lib64/
 ```
 
+---
+
 ### One-file installation
 
 Download `install.sh` [script](https://github.com/microsoft/terminal) file. Put the file in `~/Downloads` folder, run following commands and it will install all the necessary libraries, python modules, make folders and give necessary permissions
@@ -95,10 +103,10 @@ Download `install.sh` [script](https://github.com/microsoft/terminal) file. Put 
 cd ~/Downloads && chmod u+x install.sh && ./install.sh
 ```
 
-Even though the above script installs everything, for your understanding only explaination of separate component inside this script are written below.
+For your understanding, what the script installs, it's explanation of separate component is given below.
 
 <Warning>
-  If you're running the `install.sh`, then running commands of this section is not required.
+  If you're running the `install.sh`, then running commands of this section is not required if the `install.sh` installation went successfully. In case of failure, you can run the following commands separately.
 </Warning>
 
 #### System Libraries
@@ -130,7 +138,28 @@ tar -xf ffmpeg-7.1.tar.xz && cd ffmpeg-7.1
 make -j 12 && sudo make install
 ```
 
-#### PYTHON Modules
+#### Folder Structures
+
+We create custom directories **_/usr/local/mirasys_** for binaries and shell scripts, **_/var/log/mirasys_** for logs, and **_/home/mirasys_** for python virtual environment, ensuring an organized and modular file structure for our AI system.
+
+```bash
+sudo mkdir /usr/local/mirasys
+sudo chown -R $USER:$USER /usr/local/mirasys
+mkdir /usr/local/mirasys/bin
+mkdir /usr/local/mirasys/nas
+mkdir /usr/local/mirasys/configs
+
+sudo mkdir /var/log/mirasys
+sudo chown -R $USER:$USER /var/log/mirasys
+
+sudo mkdir /home/mirasys
+sudo chown $USER:$USER /home/mirasys
+
+sudo mkdir -p /etc/systemd/systeml/.models
+sudo chown -R $USER:$USER /etc/systemd/systeml
+```
+
+#### Python
 <img
   style={{ borderRadius: '0.5rem' }}
   src="/images/python_01.png"
@@ -139,10 +168,6 @@ make -j 12 && sudo make install
 Using Python virtual environments ensures dependency isolation, preventing conflicts between different projects. The setup installs Python 3.11, essential AI/ML libraries (Ultralytics, OpenVINO, ONNX, MediaPipe), and video processing tools (AV, FFmpeg), optimizing the system for deep learning, computer vision, and real-time AI inference.
 
 ```bash
-sudo mkdir /usr/local/mirasys && sudo mkdir /var/log/mirasys && sudo mkdir /home/mirasys
-sudo chown -R $USER:$USER /usr/local/mirasys && sudo chown -R $USER:$USER /var/log/mirasys && sudo chown $USER:$USER /home/mirasys
-mkdir /usr/local/mirasys/bin && mkdir /usr/local/mirasys/nas
-
 sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt-get update
 sudo apt-get install -y python3.11 python3.11-dev python3.11-distutils
 # For PIP install

@@ -1,0 +1,127 @@
+---
+title: Installation
+description: Mirasys Frontend - Sleek, Smart, Seamless 🗃️
+icon: 'puzzle-piece'
+---
+
+<img
+  className="block dark:hidden"
+  src="/images/tech_loops-light.png"
+  alt="Linux is Good"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/tech_loops-dark.png"
+  alt="Linux is Good"
+/>
+
+
+## System Requirements
+
+- **Operating System**: Ubuntu 24.04
+- **Docker**: Docker must be installed and running (see guide below)
+- **Administrator Mode**: You'll need administrator privileges to run some of the commands
+- **Internet Connection**: An active internet connection is required to download the necessary docker images and dependencies.
+
+<Tip>
+  Ubuntu has a good terminal built-in but Windows's command prompt is very basic, so please download [Windows Terminal](https://github.com/microsoft/terminal). This has features of tabs, and supports more Linux native commands that will be useful when interacting with it.
+</Tip>
+
+## One-file installation
+
+Download `install_fe.sh` [script](https://github.com/microsoft/terminal) file. Put the file in `~/Documents` folder, run following commands and it will install all the necessary libraries, python modules, make folders and give necessary permissions
+```bash install_fe.sh
+cd ~/Downloads && chmod u+x install_fe.sh && ./install_fe.sh
+```
+
+For your understanding, what the script installs, it's explanation of separate component is given below.
+
+<Warning>
+  If you're running the `install_fe.sh`, then running commands of this section is not required if the `install_fe.sh` installation went successfully. In case of failure, you can run the following commands separately.
+</Warning>
+
+### System Libraries
+
+These commands install and configure Docker on Ubuntu, adding its official repository, verifying packages, and setting up the necessary runtime components. They also ensure non-root users can run Docker by adding them to the docker group, allowing seamless container management for our frontend system.
+
+```bash
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+sudo sh -c 'echo "deb [arch=amd signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list'
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io
+sudo groupadd docker
+sudo usermod -aG docker $USER
+sudo systemctl status docker
+```
+
+### Docker
+
+#### What is Docker?
+Docker is a tool that packages an application and everything it needs (code, libraries, settings) into a "container." This container can run on any computer with Docker installed, ensuring the app works the same everywhere.
+
+#### How Does Docker Work?
+- **Containers**: Lightweight, isolated environments that share the host computer’s OS but keep the app and its dependencies separate.
+- **Docker Images**: Blueprints for containers. They include everything needed to run the app.
+- **Dockerfile**: Instructions to build an image.
+- **Docker Hub**: This is like an app store for Docker images. You can download pre-made images (like WordPress, MySQL, etc.) or upload your own.
+
+#### Why use Docker?
+- **Consistency**: Works the same on any machine.
+- **Isolation**: Apps run independently.
+- **Portability**: Easy to move between environments.
+- **Efficiency**: Lightweight and fast.
+
+Example:
+Think of Docker as a lunchbox. You pack your meal (app) with all the utensils (dependencies) it needs. You can open it anywhere and eat the same way, no matter the kitchen (computer).
+
+In short, Docker makes building, sharing, and running apps simple and reliable!
+
+These commands ensure a clean and fresh deployment of our frontend system. First, old configuration files (.env and docker-compose.yaml) are removed to prevent conflicts. Then, deploy.sh init-images pulls the required Docker images, and deploy.sh development sets up and starts the services in a development environment. Finally, create-tenant-db.sh initializes the database structure needed for multi-tenant support.
+
+#### How to use Docker in our frontend system?
+
+Before running the deployment, operators must request the required `zip` containing Docker files from the software team. This ensures they have the latest version of the application and dependencies for a smooth setup.
+
+Once you have the necessary files, execute the following commands to clean the environment and start the deployment:
+
+```bash
+cd ~/Documents
+unzip mirasysfrontend.zip && cd mirasysfrontend
+
+# Remove Existing Configuration Files
+rm -f .env docker-compose.yaml
+
+# Initialize Docker Images for Caching
+sudo ./deploy.sh init-images
+
+# Build and Deploy the Application
+sudo ./deploy.sh development
+
+# Migrate Databases
+sudo ./create-tenant-db.sh
+```
+
+#### How to access the frontend system?
+
+We configure the `/etc/hosts` file on each machine to map domain names to IP addresses (`127.0.0.1` for same machine and network IP for other machines), allowing the frontend system and its services to be accessed using human-readable names instead of IP addresses. This acts as a local Domain Name System (DNS) resolver, ensuring smooth communication between components without needing an external DNS server. It helps standardize access across different machines and avoids network dependency issues.
+
+**How to Add Entries:**
+- **Linux & macOS**: Edit the file using `sudo nano /etc/hosts`, add the entries, save, and exit.
+- **Windows**: Open `C:\Windows\System32\drivers\etc\hosts` in Notepad as Administrator, add the entries, and save the file.
+
+```bash
+127.0.0.1 phpmyadmin_mirasys.local
+127.0.0.1 mirasys_frontend_central.local
+127.0.0.1 mirasys_frnt.local
+127.0.0.1 mirasys_api_gateway.local
+127.0.0.1 mirasys_api_tenant_gateway.local
+127.0.0.1 mirasys_backend.local
+127.0.0.1 mirasys_stream.local
+127.0.0.1 traefik_mirasys.local
+127.0.0.1 rabbitmq.local
+127.0.0.1 infra.local
+```
+
+Go to a Google Chrome browser (prefered) and type `http://mirasys_frnt.local` to access the frontend system.

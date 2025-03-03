@@ -1,0 +1,117 @@
+---
+title: 'Shell and Services'
+description: 'Applications and how to start them.'
+icon: 'code'
+---
+
+## Basic
+
+Shell scripts are simple text files containing a series of commands that execute sequentially e.g. `install.sh` file that we used to install everything, acting as automated instructions for the system.
+
+However, running a program manually every time isn’t efficient. That’s where systemd services come in—they ensure the program starts automatically on boot, keeps running in the background, restarts if it crashes, and integrates smoothly with Linux’s process management.
+
+---
+
+<Note>
+  If you have used `install.sh` file to install, then you don't need to download following files and put them in place. Just use the below information to understand how it works and check relevant files in their respective paths in case of debugging.
+</Note>
+
+## AI Application
+
+Our AI application: [MirasysAI.rnix](http://google.com), which works in a way that will connect to the front end server, fetch configurations via API, and start appropriate analytics, needs to be put in `/usr/local/mirasys`. Verify the version of the application by running the following command:
+
+```bash
+cd /usr/local/mirasys && ./MirasysAI.rnix --version
+```
+
+## Shell Scripts
+
+A shell script works as a series of sequentially executed commands, automating repetitive tasks, setting up environments, and running programs without manual intervention.
+
+The above application is launched using a shell script `mirasys-app.sh` located in `/usr/local/mirasys/bin`.
+
+This shell script initializes and runs the `MirasysAI.rnix` program with GPU-specific configurations. It extracts parameters from input arguments, sets up logging in `/var/log/mirasys`, and optimizes resource allocation by configuring environment variables like `CUDA_VISIBLE_DEVICES` for GPU selection and thread limits for performance tuning. The script then starts the AI application, either using a local config file or dynamically fetching configurations from an API, ensuring flexible deployment and efficient execution.
+
+```bash mirasys-app.sh
+#!/bin/bash -i
+# source /home/mirasys/.bashrc
+
+# Input parameter with hyphens
+INPUT="$1"
+IFS='-' read -ra PARAMS <<< "$INPUT"
+
+APP_ID=$(printf "app_%02d" "${PARAMS[0]}")
+echo $APP_ID
+
+GPU_ID=${PARAMS[1]}
+echo $GPU_ID
+
+log_dir=/var/log/mirasys/$APP_ID/console
+mkdir -p $log_dir
+log=c_$(date +%Y-%m-%d).log
+echo $log_dir
+
+export CUDA_VISIBLE_DEVICES=$GPU_ID
+export FFREPORT=level=quiet
+export OPENBLAS_NUM_THREADS=2
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+# export OPENCV_FFMPEG_CAPTURE_OPTIONS='rtsp_transport;udp|rtbufsize;50M|buffer_size;0|allowed_media_types;video'
+export OPENCV_FFMPEG_CAPTURE_OPTIONS='rtsp_transport;tcp'
+
+cd /usr/local/mirasys
+
+# To run from a local config file
+# ./MirasysAI.rnix --config configs/$APP_ID.json >> $log_dir/$log 2>&1
+
+# To run by fetching config via API
+./MirasysAI.rnix -u http://mirasys_api_tenant_gateway.local -i $APP_ID >> $log_dir/$log 2>&1
+
+# In case of numactl is available
+# numactl --cpunodebind=$GPU_ID --membind=$GPU_ID ./MirasysAI.rnix --config configs/$APP_ID.json >> $log_dir/$log 2>&1
+```
+
+## Linux Services
+
+Systemd services work by defining how and when a program should start, stop, and restart, enabling reliable background execution, automatic recovery from failures, and seamless system integration.
+
+This systemd service `mirasys-app@.service` located at `/etc/systemd/system` automates the startup and management of the MirasysAI.rnix application. It ensures the script `/usr/local/mirasys/bin/mirasys-app.sh` runs with a provided instance ID (%i), setting the working directory and handling automatic restarts in case of failure. The service starts after network-related targets to ensure dependencies are available.
+
+```bash mirasys-app.service
+[Unit]
+Description=Mirasys-App-Service
+After=network.target
+After=systemd-user-sessions.service
+After=network-online.target
+
+[Service]
+User=mirasys # change user according to machine
+Type=simple
+WorkingDirectory=/usr/local/mirasys/bin
+ExecStart=/usr/local/mirasys/bin/mirasys-app.sh %i
+TimeoutSec=30
+Restart=on-failure
+RestartSec=20
+StartLimitInterval=350
+StartLimitBurst=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+When manually putting the service file in `/etc/systemd/system`, the systemd handler needs to be reaload with below command:
+
+```bash
+sudo systemctl daemon-reload
+```
+
+The service needs to be enabled, started, and monitored using the following commands:
+
+```
+sudo systemctl enable mirasys-app@1-0.service
+sudo systemctl start mirasys-app@1-0.service
+sudo systemctl status mirasys-app@1-0.service
+```
+<Note>
+Here, the 1-0 demonicates 1 as **app_id** that needs to be configured in front end and using here it will fetch the congiguration via API. The 0 is the GPU ID that will be used to run the application.
+</Note> 
