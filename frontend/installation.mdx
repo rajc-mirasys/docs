@@ -78,13 +78,11 @@ Think of Docker as a lunchbox. You pack your meal (app) with all the utensils (d
 
 In short, Docker makes building, sharing, and running apps simple and reliable!
 
-These commands ensure a clean and fresh deployment of our frontend system. First, old configuration files (.env and docker-compose.yaml) are removed to prevent conflicts. Then, deploy.sh init-images pulls the required Docker images, and deploy.sh development sets up and starts the services in a development environment. Finally, create-tenant-db.sh initializes the database structure needed for multi-tenant support.
-
 #### How to use Docker in our frontend system?
 
 Before running the deployment, operators must request the required `zip` containing Docker files from the software team. This ensures they have the latest version of the application and dependencies for a smooth setup.
 
-Once you have the necessary files, execute the following commands to clean the environment and start the deployment:
+Once you have the necessary files, execute the following commands. These commands ensure a clean and fresh deployment of our frontend system. First, old configuration files (.env and docker-compose.yaml) are removed to prevent conflicts. Then, deploy.sh init-images pulls the required Docker images, and deploy.sh development sets up and starts the services in a development environment. Finally, create-tenant-db.sh initializes the database structure needed for multi-tenant support.:
 
 ```bash
 cd ~/Documents
