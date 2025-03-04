@@ -20,171 +20,156 @@ Our AI system works on a Linux operating system, specially Ubuntu (24.04 or 22.0
 We have customized a Ubuntu ISO with pre-installed dependencies for AI-based object, activity detection and Front end to work immediately. However, in some cases, manual installation may be required where a format is not possible or a freshly installed system is given.
 
 
-<AccordionGroup>
-  <Accordion icon="bitbucket" title="Using customized Ubuntu ISO">
+<Tabs>
+  <Tab title="1. Customized Ubuntu ISO">
+
     This customized ISO is divided into 2 architectures: [with Nvidia](https://dashboard.mintlify.com) and [without Nvidia](https://dashboard.mintlify.com) GPUs. You can download and follow these [instructions](https://ubuntu.com/tutorials/create-a-usb-stick-on-windows#1-overview) from your Windows machine to make it bootable and install to the client server, laptop or edge devices (excluding Jetson).
     <Note>
     Remember to disable Secure Boot in your BIOS for Nvidia driver to function correctly.
     </Note>
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Manual installation">
-    Previewing helps you make sure your changes look as intended. We built a
-    command line interface to render these changes locally. 
-    1. Install the
-    [Mintlify CLI](https://www.npmjs.com/package/mintlify) to preview the
-    documentation changes locally with this command: ``` npm i -g mintlify ```
-    2. Run the following command at the root of your documentation (where
-    `docs.json` is): ``` mintlify dev ```
-    <Note>
-      If you’re currently using the legacy ```mint.json``` configuration file, please update the Mintlify CLI:
+  </Tab>
 
+  <Tab title="2. Manual Installation">
 
-      ```npm i -g mintlify@latest```
-      And run the new upgrade command in your docs repository:
+    ## Manual Installation: On a fresh Ubuntu OS
 
-      ```mintlify upgrade```
-      You should now be using the new ```docs.json``` configuration file. Feel free to delete the ```mint.json``` file from your repository.
-    </Note>
-  </Accordion>
-</AccordionGroup>
+    **Pre-condition**: You must know by now how to create a bootable Ubuntu ISO, disable secure boot in case of Nvidia GPUs and basic CLI usages.
 
-## Manual Installation: On a fresh Ubuntu OS
+    <Tip>
+      Ubuntu has a good terminal built-in but Windows's command prompt is very basic, so please download [Windows Terminal](https://github.com/microsoft/terminal). This has features of tabs, and supports more Linux native commands that will be useful when interacting with it.
+    </Tip>
 
-**Pre-condition**: You must know by now how to create a bootable Ubuntu ISO, disable secure boot in case of Nvidia GPUs and basic CLI usages.
+    ### Nvidia
 
-<Tip>
-  Ubuntu has a good terminal built-in but Windows's command prompt is very basic, so please download [Windows Terminal](https://github.com/microsoft/terminal). This has features of tabs, and supports more Linux native commands that will be useful when interacting with it.
-</Tip>
+    <Warning>
+      Only do if you have Nvidia GPU. If you're not sure, then run the following command to check if Nvidia GPU is available and don't forget to disable Secure Boot in BIOS settings.
+    </Warning>
 
-### Nvidia
+    Update the device database and find if Nvidia GPU is available.
 
-<Warning>
-  Only do if you have Nvidia GPU. If you're not sure, then run the following command to check if Nvidia GPU is available and don't forget to disable Secure Boot in BIOS settings.
-</Warning>
+    ```bash
+    sudo update-pciids && sudo lshw -C display
+    ```
 
-Update the device database and find if Nvidia GPU is available.
+    #### Drivers
 
-```bash
-sudo update-pciids && sudo lshw -C display
-```
+    If Nvidia GPU is available, then install the driver using the following commands.
 
-#### Drivers
+    ```bash
+    sudo add-apt-repository ppa:graphics-drivers/ppa
+    ubuntu-drivers devices
+    sudo apt install nvidia-driver-560
+    ```
 
-If Nvidia GPU is available, then install the driver using the following commands.
+    #### CUDA, CuDNN and TensorRT
 
-```bash
-sudo add-apt-repository ppa:graphics-drivers/ppa
-ubuntu-drivers devices
-sudo apt install nvidia-driver-560
-```
+    CUDA, CuDNN, and TensorRT are essential for accelerating deep learning on NVIDIA GPUs—CUDA enables parallel computing, CuDNN optimizes neural network operations, and TensorRT enhances model inference speed with lower latency and higher efficiency.
 
-#### CUDA, CuDNN and TensorRT
+    ```bash cuda
+    wget https://developer.download.nvidia.com/compute/cuda/12.8.0/local_installers/cuda_12.8.0_570.86.10_linux.run
+    chmod +x cuda_12.8.0_570.86.10_linux.run && sudo sh cuda_12.8.0_570.86.10_linux.run
+    ```
 
-CUDA, CuDNN, and TensorRT are essential for accelerating deep learning on NVIDIA GPUs—CUDA enables parallel computing, CuDNN optimizes neural network operations, and TensorRT enhances model inference speed with lower latency and higher efficiency.
+    ```bash cudnn
+    wget https://developer.download.nvidia.com/compute/cudnn/redist/cudnn/linux-x86_64/cudnn-linux-x86_64-9.7.1.26_cuda12-archive.tar.xz
+    tar -xf cudnn-linux-x86_64-9.7.1.26_cuda12-archive.tar.xz
+    sudo mv -n cuda/include/* /usr/local/cuda/include/
+    sudo mv -n cuda/lib64/* /usr/local/cuda/lib64/
+    ```
 
-```bash cuda
-wget https://developer.download.nvidia.com/compute/cuda/12.8.0/local_installers/cuda_12.8.0_570.86.10_linux.run
-chmod +x cuda_12.8.0_570.86.10_linux.run && sudo sh cuda_12.8.0_570.86.10_linux.run
-```
+    ---
 
-```bash cudnn
-wget https://developer.download.nvidia.com/compute/cudnn/redist/cudnn/linux-x86_64/cudnn-linux-x86_64-9.7.1.26_cuda12-archive.tar.xz
-tar -xf cudnn-linux-x86_64-9.7.1.26_cuda12-archive.tar.xz
-sudo mv -n cuda/include/* /usr/local/cuda/include/
-sudo mv -n cuda/lib64/* /usr/local/cuda/lib64/
-```
+    ### One-file installation
 
----
+    Download `install.sh` [script](https://github.com/microsoft/terminal) file. Put the file in `~/Downloads` folder, run following commands and it will install all the necessary libraries, python modules, make folders and give necessary permissions
+    ```bash install.sh
+    cd ~/Downloads && chmod u+x install.sh && ./install.sh
+    ```
 
-### One-file installation
+    For your understanding: What the script installs and it's explanation of separate components are given below.
 
-Download `install.sh` [script](https://github.com/microsoft/terminal) file. Put the file in `~/Downloads` folder, run following commands and it will install all the necessary libraries, python modules, make folders and give necessary permissions
-```bash install.sh
-cd ~/Downloads && chmod u+x install.sh && ./install.sh
-```
+    <Warning>
+      If you're running the `install.sh`, then running commands of this section is not required if the `install.sh` installation went successfully. In case of failure, you can run the following commands separately.
+    </Warning>
 
-For your understanding, what the script installs, it's explanation of separate component is given below.
+    <AccordionGroup>
+      <Accordion icon="computer-classic" title="System Libraries">
+        These commands install essential development libraries, compilers, and dependencies for AI-based applications on Ubuntu, including tools for building software, media processing, GUI development, networking, and hardware interaction. They ensure a fully equipped environment for compiling and running AI models efficiently.
 
-<Warning>
-  If you're running the `install.sh`, then running commands of this section is not required if the `install.sh` installation went successfully. In case of failure, you can run the following commands separately.
-</Warning>
+        ```bash
+        sudo apt-get install -y curl git git-lfs
+        sudo apt-get install -y cmake build-essential zsh neovim yasm ripgrep parallel openssh-server autossh net-tools patchelf ccache
+        sudo apt-get install -y libgl1 libgtk-3-dev libjpeg-dev libpng-dev libtiff-dev
+        sudo apt-get install -y libavformat-dev libavcodec-dev libavdevice-dev libavutil-dev libswscale-dev libswresample-dev libavfilter-dev libx264-dev libx265-dev
+        sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+        sudo apt install -y qtbase5-dev qt5-qmake
+        sudo apt-get install -y libyaml-cpp-dev libeigen3-dev libtool libc6 libc6-dev libusb-1.0-0 libnuma1 libnuma-dev libxdo3
+        sudo apt-get install -y gcc-9 g++-9.
+        ```
+      </Accordion>
+      <Accordion icon='video' title="FFmpeg">
+        FFmpeg is installed to handle video processing, encoding, and decoding, while on NVIDIA platforms, it is built with GPU support to accelerate video processing using NVENC/NVDEC for faster performance and lower CPU usage.
 
-#### System Libraries
+        ```bash
+        cd $HOME/Downloads
+        git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
+        cd nv-codec-headers && sudo make install && cd –
+        wget https://ffmpeg.org/releases/ffmpeg-7.1.tar.xz
+        tar -xf ffmpeg-7.1.tar.xz && cd ffmpeg-7.1
+        ./configure --prefix=/usr/local --enable-nonfree --enable-cuda-nvcc --enable-libnpp --extra-cflags=-I/usr/local/cuda/include --extra-ldflags=-L/usr/local/cuda/lib64 --disable-static --enable-shared --enable-libx264 --enable-libx265 --enable-gpl
+        make -j 12 && sudo make install
+        ```
+      </Accordion>
+      <Accordion icon='folder' title="Folder Structures">
+        We create custom directories **_/usr/local/mirasys_** for binaries and shell scripts, **_/var/log/mirasys_** for logs, and **_/home/mirasys_** for python virtual environment, ensuring an organized and modular file structure for our AI system.
 
-These commands install essential development libraries, compilers, and dependencies for AI-based applications on Ubuntu, including tools for building software, media processing, GUI development, networking, and hardware interaction. They ensure a fully equipped environment for compiling and running AI models efficiently.
+        ```bash
+        sudo mkdir /usr/local/mirasys
+        sudo chown -R $USER:$USER /usr/local/mirasys
+        mkdir /usr/local/mirasys/bin
+        mkdir /usr/local/mirasys/nas
+        mkdir /usr/local/mirasys/configs
 
-```bash
-sudo apt-get install -y curl git git-lfs
-sudo apt-get install -y cmake build-essential zsh neovim yasm ripgrep parallel openssh-server autossh net-tools patchelf ccache
-sudo apt-get install -y libgl1 libgtk-3-dev libjpeg-dev libpng-dev libtiff-dev
-sudo apt-get install -y libavformat-dev libavcodec-dev libavdevice-dev libavutil-dev libswscale-dev libswresample-dev libavfilter-dev libx264-dev libx265-dev
-sudo apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
-sudo apt install -y qtbase5-dev qt5-qmake
-sudo apt-get install -y libyaml-cpp-dev libeigen3-dev libtool libc6 libc6-dev libusb-1.0-0 libnuma1 libnuma-dev libxdo3
-sudo apt-get install -y gcc-9 g++-9.
-```
+        sudo mkdir /var/log/mirasys
+        sudo chown -R $USER:$USER /var/log/mirasys
 
-#### FFmpeg
+        sudo mkdir /home/mirasys
+        sudo chown $USER:$USER /home/mirasys
 
-FFmpeg is installed to handle video processing, encoding, and decoding, while on NVIDIA platforms, it is built with GPU support to accelerate video processing using NVENC/NVDEC for faster performance and lower CPU usage.
+        sudo mkdir -p /etc/systemd/systeml/.models
+        sudo chown -R $USER:$USER /etc/systemd/systeml
+        ```
+      </Accordion>
+      <Accordion icon='python' title="Python">
+        <img
+          style={{ borderRadius: '0.5rem' }}
+          src="/images/python_01.png"
+        />
 
-```bash
-cd $HOME/Downloads
-git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
-cd nv-codec-headers && sudo make install && cd –
-wget https://ffmpeg.org/releases/ffmpeg-7.1.tar.xz
-tar -xf ffmpeg-7.1.tar.xz && cd ffmpeg-7.1
-./configure --prefix=/usr/local --enable-nonfree --enable-cuda-nvcc --enable-libnpp --extra-cflags=-I/usr/local/cuda/include --extra-ldflags=-L/usr/local/cuda/lib64 --disable-static --enable-shared --enable-libx264 --enable-libx265 --enable-gpl
-make -j 12 && sudo make install
-```
+        Using Python virtual environments ensures dependency isolation, preventing conflicts between different projects. The setup installs Python 3.11, essential AI/ML libraries (Ultralytics, OpenVINO, ONNX, MediaPipe), and video processing tools (AV, FFmpeg), optimizing the system for deep learning, computer vision, and real-time AI inference.
 
-#### Folder Structures
+        ```bash
+        sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt-get update
+        sudo apt-get install -y python3.11 python3.11-dev python3.11-distutils
+        # For PIP install
+        cd ~/Downloads && wget https://bootstrap.pypa.io/get-pip.py
+        python3.11 get-pip.py
+        # python3.11 -m pip install --upgrade virtualenv setuptools numpy
 
-We create custom directories **_/usr/local/mirasys_** for binaries and shell scripts, **_/var/log/mirasys_** for logs, and **_/home/mirasys_** for python virtual environment, ensuring an organized and modular file structure for our AI system.
+        # For uv (alternative to PIP) installation
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        export PATH=$HOME/.local/bin:/usr/local/cuda/bin:$PATH
 
-```bash
-sudo mkdir /usr/local/mirasys
-sudo chown -R $USER:$USER /usr/local/mirasys
-mkdir /usr/local/mirasys/bin
-mkdir /usr/local/mirasys/nas
-mkdir /usr/local/mirasys/configs
-
-sudo mkdir /var/log/mirasys
-sudo chown -R $USER:$USER /var/log/mirasys
-
-sudo mkdir /home/mirasys
-sudo chown $USER:$USER /home/mirasys
-
-sudo mkdir -p /etc/systemd/systeml/.models
-sudo chown -R $USER:$USER /etc/systemd/systeml
-```
-
-#### Python
-<img
-  style={{ borderRadius: '0.5rem' }}
-  src="/images/python_01.png"
-/>
-
-Using Python virtual environments ensures dependency isolation, preventing conflicts between different projects. The setup installs Python 3.11, essential AI/ML libraries (Ultralytics, OpenVINO, ONNX, MediaPipe), and video processing tools (AV, FFmpeg), optimizing the system for deep learning, computer vision, and real-time AI inference.
-
-```bash
-sudo add-apt-repository -y ppa:deadsnakes/ppa && sudo apt-get update
-sudo apt-get install -y python3.11 python3.11-dev python3.11-distutils
-# For PIP install
-cd ~/Downloads && wget https://bootstrap.pypa.io/get-pip.py
-python3.11 get-pip.py
-# python3.11 -m pip install --upgrade virtualenv setuptools numpy
-
-# For uv (alternative to PIP) installation
-curl -LsSf https://astral.sh/uv/install.sh | sh
-export PATH=$HOME/.local/bin:/usr/local/cuda/bin:$PATH
-
-uv venv /home/mirasys/.venv --python python3.11
-source /home/mirasys/.venv/bin/activate
-uv pip install ultralytics lap
-uv pip install -U openvino onnx onnxruntime onnxslim requests tomli mediapipe rich
-uv pip install av --no-binary av
-uv pip install pyzmq scikit-image scikit-learn scipy shapely albumentations filterpy
-uv pip install git+https://github.com/openai/CLIP.git 
-uv pip install open-clip-torch
-```
+        uv venv /home/mirasys/.venv --python python3.11
+        source /home/mirasys/.venv/bin/activate
+        uv pip install ultralytics lap
+        uv pip install -U openvino onnx onnxruntime onnxslim requests tomli mediapipe rich
+        uv pip install av --no-binary av
+        uv pip install pyzmq scikit-image scikit-learn scipy shapely albumentations filterpy
+        uv pip install git+https://github.com/openai/CLIP.git 
+        uv pip install open-clip-torch
+        ```
+    </Accordion>
+    </AccordionGroup>
+  </Tab>
+</Tabs>

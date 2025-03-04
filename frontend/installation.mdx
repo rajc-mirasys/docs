@@ -4,19 +4,24 @@ description: Mirasys Frontend - Sleek, Smart, Seamless 🗃️
 icon: 'puzzle-piece'
 ---
 
-<img alt="Linux is Good" classname="block dark:hidden" src="/images/tech_loops-light.png" />
+<img
+  className="block dark:hidden"
+  src="/images/tech_loops-light.png"
+  alt="Linux is Good"
+/>
+<img
+  className="hidden dark:block"
+  src="/images/tech_loops-dark.png"
+  alt="Linux is Good"
+/>
 
-<img alt="Linux is Good" classname="hidden dark:block" src="/images/tech_loops-dark.png" />
 
 ## System Requirements
 
-* **Operating System**: Ubuntu 24.04
-
-* **Docker**: Docker must be installed and running (see guide below)
-
-* **Administrator Mode**: You'll need administrator privileges to run some of the commands
-
-* **Internet Connection**: An active internet connection is required to download the necessary docker images and dependencies.
+- **Operating System**: Ubuntu 24.04
+- **Docker**: Docker must be installed and running (see guide below)
+- **Administrator Mode**: You'll need administrator privileges to run some of the commands
+- **Internet Connection**: An active internet connection is required to download the necessary docker images and dependencies.
 
 <Tip>
   Ubuntu has a good terminal built-in but Windows's command prompt is very basic, so please download [Windows Terminal](https://github.com/microsoft/terminal). This has features of tabs, and supports more Linux native commands that will be useful when interacting with it.
@@ -25,7 +30,6 @@ icon: 'puzzle-piece'
 ## One-file installation
 
 Download `install_fe.sh` [script](https://github.com/microsoft/terminal) file. Put the file in `~/Documents` folder, run following commands and it will install all the necessary libraries, python modules, make folders and give necessary permissions
-
 ```bash install_fe.sh
 cd ~/Downloads && chmod u+x install_fe.sh && ./install_fe.sh
 ```
@@ -55,28 +59,19 @@ sudo systemctl status docker
 ### Docker
 
 #### What is Docker?
-
 Docker is a tool that packages an application and everything it needs (code, libraries, settings) into a "container." This container can run on any computer with Docker installed, ensuring the app works the same everywhere.
 
 #### How Does Docker Work?
-
-* **Containers**: Lightweight, isolated environments that share the host computer’s OS but keep the app and its dependencies separate.
-
-* **Docker Images**: Blueprints for containers. They include everything needed to run the app.
-
-* **Dockerfile**: Instructions to build an image.
-
-* **Docker Hub**: This is like an app store for Docker images. You can download pre-made images (like WordPress, MySQL, etc.) or upload your own.
+- **Containers**: Lightweight, isolated environments that share the host computer’s OS but keep the app and its dependencies separate.
+- **Docker Images**: Blueprints for containers. They include everything needed to run the app.
+- **Dockerfile**: Instructions to build an image.
+- **Docker Hub**: This is like an app store for Docker images. You can download pre-made images (like WordPress, MySQL, etc.) or upload your own.
 
 #### Why use Docker?
-
-* **Consistency**: Works the same on any machine.
-
-* **Isolation**: Apps run independently.
-
-* **Portability**: Easy to move between environments.
-
-* **Efficiency**: Lightweight and fast.
+- **Consistency**: Works the same on any machine.
+- **Isolation**: Apps run independently.
+- **Portability**: Easy to move between environments.
+- **Efficiency**: Lightweight and fast.
 
 Example:
 Think of Docker as a lunchbox. You pack your meal (app) with all the utensils (dependencies) it needs. You can open it anywhere and eat the same way, no matter the kitchen (computer).
@@ -111,25 +106,33 @@ sudo ./create-tenant-db.sh
 We configure the `/etc/hosts` file on each machine to map domain names to IP addresses (`127.0.0.1` for same machine and network IP for other machines), allowing the frontend system and its services to be accessed using human-readable names instead of IP addresses. This acts as a local Domain Name System (DNS) resolver, ensuring smooth communication between components without needing an external DNS server. It helps standardize access across different machines and avoids network dependency issues.
 
 **How to Add Entries:**
-
-* **Linux & macOS**: Edit the file using `sudo nano /etc/hosts`, add the entries, save, and exit.
-
-* **Windows**: Open `C:\Windows\System32\drivers\etc\hosts` in Notepad as Administrator, add the entries, and save the file.
-
-```bash
-127.0.0.1 phpmyadmin_mirasys.local
-127.0.0.1 mirasys_frontend_central.local
-127.0.0.1 mirasys_frnt.local
-127.0.0.1 mirasys_api_gateway.local
-127.0.0.1 mirasys_api_tenant_gateway.local
-127.0.0.1 mirasys_backend.local
-127.0.0.1 mirasys_stream.local
-127.0.0.1 traefik_mirasys.local
-127.0.0.1 rabbitmq.local
-127.0.0.1 infra.local
-# REPLACE 127.0.0.1 WITH THE IP OF THE SERVER WHERE FRONTEND IS INSTALLED
-```
-
-REPLACE 127.0.0.1 WITH THE IP OF THE SERVER WHERE FRONTEND IS INSTALLED
-
-Go to a Google Chrome browser (prefered) and type [`http://mirasys_frnt.local`](http://mirasys_frnt.local) to access the frontend system.
+<Steps>
+  <Step title="Edit `hosts` file">
+    - **Linux & macOS**: 
+        - Edit the file `hosts` by using command: `sudo vim /etc/hosts`.
+        - Press `i` to enter insert mode. Then add the entries.
+        - Press `Esc` to exit insert mode. Then type `:wq` to save and exit.
+    - **Windows**: 
+        - Open Notepad as an administrator.
+        - Go to folder `C:\Windows\System32\drivers\etc`.
+        - Open the `hosts` file.
+        - Add the entries, save, and exit.
+  </Step>
+  <Step title="Entries">
+    ```bash 
+    127.0.0.1 phpmyadmin_mirasys.local
+    127.0.0.1 mirasys_frontend_central.local
+    127.0.0.1 mirasys_frnt.local
+    127.0.0.1 mirasys_api_gateway.local
+    127.0.0.1 mirasys_api_tenant_gateway.local
+    127.0.0.1 mirasys_backend.local
+    127.0.0.1 mirasys_stream.local
+    127.0.0.1 traefik_mirasys.local
+    127.0.0.1 rabbitmq.local
+    127.0.0.1 infra.local
+    ```
+  </Step>
+  <Step title="Access">
+    - Go to a Google Chrome browser (prefered) and type [http://mirasys_frnt.local](http://mirasys_frnt.local) to access the frontend system.
+  </Step> 
+</Steps>
