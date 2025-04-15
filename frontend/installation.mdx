@@ -27,34 +27,45 @@ icon: 'puzzle-piece'
   Ubuntu has a good terminal built-in but Windows's command prompt is very basic, so please download [Windows Terminal](https://github.com/microsoft/terminal). This has features of tabs, and supports more Linux native commands that will be useful when interacting with it.
 </Tip>
 
+---
+
 ## One-file installation
 
-Download `install_fe.sh` [script](https://github.com/microsoft/terminal) file. Put the file in `~/Documents` folder, run following commands and it will install all the necessary libraries, python modules, make folders and give necessary permissions
+Download `install.sh` [script](https://github.com/microsoft/terminal) file. Put the file in `~/Documents` folder, run following commands and it will install all the necessary libraries, docker dependencies, make folders and give necessary permissions
 ```bash install_fe.sh
 cd ~/Downloads && chmod u+x install_fe.sh && ./install_fe.sh
 ```
 
 For your understanding, what the script installs, it's explanation of separate component is given below.
 
+<Note>
+   running the `install_fe.sh`, then running commands of this section is not required if the `install_fe.sh` installation went successfully. In case of failure, you can run the following commands separately.
+</Note>
+
 <Warning>
-  If you're running the `install_fe.sh`, then running commands of this section is not required if the `install_fe.sh` installation went successfully. In case of failure, you can run the following commands separately.
+  If you had installed AI System components using `install.sh`, then frontend system dependencies were also installed.
+
+  Additionally, when installing through `install.sh` and if that went successfully then running commands of below section **System Libraries is not required**, they only need to be ran separately in case of failure of `install.sh`. Otherwise continue from Docker section.
 </Warning>
 
-### System Libraries
+<AccordionGroup>
+  <Accordion icon="computer-classic" title="System Libraries">
 
-These commands install and configure Docker on Ubuntu, adding its official repository, verifying packages, and setting up the necessary runtime components. They also ensure non-root users can run Docker by adding them to the docker group, allowing seamless container management for our frontend system.
+    These commands install and configure Docker on Ubuntu, adding its official repository, verifying packages, and setting up the necessary runtime components. They also ensure non-root users can run Docker by adding them to the docker group, allowing seamless container management for our frontend system.
 
-```bash
-sudo apt update
-sudo apt install apt-transport-https ca-certificates curl software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-sudo sh -c 'echo "deb [arch=amd signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list'
-sudo apt update
-sudo apt install docker-ce docker-ce-cli containerd.io
-sudo groupadd docker
-sudo usermod -aG docker $USER
-sudo systemctl status docker
-```
+    ```bash
+    sudo apt update
+    sudo apt install apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    sudo sh -c 'echo "deb [arch=amd signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" > /etc/apt/sources.list.d/docker.list'
+    sudo apt update
+    sudo apt install docker-ce docker-ce-cli containerd.io
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    sudo systemctl status docker
+    ```
+  </Accordion>
+</AccordionGroup>
 
 ### Docker
 
@@ -80,7 +91,7 @@ In short, Docker makes building, sharing, and running apps simple and reliable!
 
 #### How to use Docker in our frontend system?
 
-Before running the deployment, operators must request the required `zip` containing Docker files from the software team. This ensures they have the latest version of the application and dependencies for a smooth setup.
+Before running the deployment, operators must _**request the required `zip` containing Docker files from the software team**_. This ensures they have the latest version of the application and dependencies for a smooth setup.
 
 Once you have the necessary files, execute the following commands. These commands ensure a clean and fresh deployment of our frontend system. First, old configuration files (.env and docker-compose.yaml) are removed to prevent conflicts. Then, deploy.sh init-images pulls the required Docker images, and deploy.sh development sets up and starts the services in a development environment. Finally, create-tenant-db.sh initializes the database structure needed for multi-tenant support.:
 
