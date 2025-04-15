@@ -81,9 +81,10 @@ We have customized a Ubuntu ISO with pre-installed dependencies for AI-based obj
 
     ### One-file installation
 
-    Download `install.sh` [script](https://github.com/microsoft/terminal) file. Put the file in `~/Downloads` folder, run following commands and it will install all the necessary libraries, python modules, make folders and give necessary permissions
+    Run following commands to download `install.sh`[[link](https://raw.githubusercontent.com/rajc-msysindia/docs/refs/heads/main/scripts/install.sh)] file and install all the necessary libraries, python modules, make folders and give necessary permissions
     ```bash install.sh
-    cd ~/Downloads && chmod u+x install.sh && ./install.sh
+    cd ~/Downloads && wget https://raw.githubusercontent.com/rajc-msysindia/docs/refs/heads/main/scripts/install.sh
+    chmod u+x install.sh && ./install.sh
     ```
 
     For your understanding: What the script installs and it's explanation of separate components are given below.

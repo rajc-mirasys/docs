@@ -31,16 +31,13 @@ icon: 'puzzle-piece'
 
 ## One-file installation
 
-Download `install.sh` [script](https://github.com/microsoft/terminal) file. Put the file in `~/Documents` folder, run following commands and it will install all the necessary libraries, docker dependencies, make folders and give necessary permissions
-```bash install_fe.sh
-cd ~/Downloads && chmod u+x install_fe.sh && ./install_fe.sh
+Run following commands to download `install.sh`[[link](https://raw.githubusercontent.com/rajc-msysindia/docs/refs/heads/main/scripts/install.sh)] file and install all the necessary libraries, docker dependencies, make folders and give necessary permissions
+```bash install.sh
+cd ~/Downloads && wget https://raw.githubusercontent.com/rajc-msysindia/docs/refs/heads/main/scripts/install.sh
+chmod u+x install.sh && ./install.sh
 ```
 
 For your understanding, what the script installs, it's explanation of separate component is given below.
-
-<Note>
-   running the `install_fe.sh`, then running commands of this section is not required if the `install_fe.sh` installation went successfully. In case of failure, you can run the following commands separately.
-</Note>
 
 <Warning>
   If you had installed AI System components using `install.sh`, then frontend system dependencies were also installed.
