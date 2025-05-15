@@ -40,9 +40,15 @@ This shell script initializes and runs the `MirasysAI.rnix` program with GPU-spe
 INPUT="$1"
 IFS='-' read -ra PARAMS <<< "$INPUT"
 
-APP_ID=$(printf "app_%02d" "${PARAMS[0]}")
-echo $APP_ID
+if [[ "$input" =~ ^[+-]?[0-9]+$ ]]; then
+  APP_ID=$(printf "app_%02d" "${PARAMS[0]}")
+  echo "Input is an integer." "$APP_ID"
+else
+  APP_ID=${PARAMS[0]}
+  echo "Input is not an integer." "$APP_ID"
+fi
 
+APP_ID="${APP_ID,,}"
 GPU_ID=${PARAMS[1]}
 echo $GPU_ID
 
@@ -77,6 +83,10 @@ source /home/mirasys/.venv-3.13/bin/activate
 Systemd services work by defining how and when a program should start, stop, and restart, enabling reliable background execution, automatic recovery from failures, and seamless system integration.
 
 This systemd service `mirasys-app@.service` located at `/etc/systemd/system` automates the startup and management of the MirasysAI.rnix application. It ensures the script `/usr/local/mirasys/bin/mirasys-app.sh` runs with a provided instance ID (%i), setting the working directory and handling automatic restarts in case of failure. The service starts after network-related targets to ensure dependencies are available.
+
+<Warning>
+Change the `User` in following service file to the system's where you're deploying.
+</Warning>
 
 ```bash mirasys-app.service
 [Unit]
